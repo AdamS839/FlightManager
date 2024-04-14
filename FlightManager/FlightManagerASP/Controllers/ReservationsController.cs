@@ -7,7 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Data.Models;
+using FluentEmail.Core;
+using FluentEmail.Smtp;
+using System.Net.Mail;
 using System.Net.Sockets;
+using Microsoft.AspNetCore.Identity;
+using System.Net;
 
 namespace FlightManagerASP.Controllers
 {
@@ -98,6 +103,7 @@ namespace FlightManagerASP.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
 
             // Model state is not valid, return the view with validation errors
             ViewData["FlightId"] = new SelectList(_context.Flights, "Id", "LocationFrom", reservation.FlightId);
@@ -191,5 +197,6 @@ namespace FlightManagerASP.Controllers
         {
             return _context.Reservations.Any(e => e.Id == id);
         }
+
     }
 }

@@ -38,8 +38,7 @@ namespace Data
                 .IsRequired();
             builder.Entity<Flight>()
                 .HasMany(r => r.Reservations)
-                .WithOne(f => f.Flight)
-                .OnDelete(DeleteBehavior.Cascade);
+                .WithOne(f => f.Flight);
 
             base.OnModelCreating(builder);
         }

@@ -22,10 +22,7 @@ namespace FlightManagerASP.Controllers
         {
             _context = context;
             _userManager = userManager;
-
         }
-
-
 
         // GET: dbUsers
         public async Task<IActionResult> Index()
