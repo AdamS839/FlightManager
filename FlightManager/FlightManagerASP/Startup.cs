@@ -25,22 +25,6 @@ namespace FlightManagerASP
 
         public IConfiguration Configuration { get; }
 
-        /*
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddDbContext<FmDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<FmDbContext>();
-            services.AddControllersWithViews();
-        }
-        */
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
