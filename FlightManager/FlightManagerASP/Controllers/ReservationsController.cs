@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Data.Models;
+using System.Net.Sockets;
 
 namespace FlightManagerASP.Controllers
 {
@@ -61,10 +62,44 @@ namespace FlightManagerASP.Controllers
         {
             if (ModelState.IsValid)
             {
+                var flight = await _context.Flights
+                    .Include(f => f.Reservations)
+                    .FirstOrDefaultAsync(f => f.Id == reservation.FlightId);
+
+                if (flight == null)
+                {
+                    // Flight not found
+                    ModelState.AddModelError(string.Empty, "Invalid flight selection.");
+                    ViewData["FlightId"] = new SelectList(_context.Flights, "Id", "LocationFrom", reservation.FlightId);
+                    return View(reservation);
+                }
+
+                // Check flight capacity
+                int bookedBusinessSeats = flight.Reservations.Where(r => r.TicketType == "Business").Sum(r => r.Id);
+                int bookedOrdinarySeats = flight.Reservations.Where(r => r.TicketType == "Ordinary").Sum(r => r.Id);
+
+                int availableBusinessSeats = flight.BusinessPassengerCapacity - bookedBusinessSeats;
+                int availableOrdinarySeats = flight.PassangerCapacity - bookedOrdinarySeats;
+
+                int requestedSeats = reservation.Id;
+                int availableBSeats = reservation.TicketType == "Business" ? availableBusinessSeats : availableOrdinarySeats;
+                int availableOSeats = reservation.TicketType == "Ordinary" ? availableBusinessSeats : availableOrdinarySeats;
+
+                if (availableBSeats < requestedSeats || availableOSeats < requestedSeats)
+                {
+                    // Not enough available seats
+                    ModelState.AddModelError(string.Empty, $"Not enough available seats for {reservation.TicketType} ticket.");
+                    ViewData["FlightId"] = new SelectList(_context.Flights, "Id", "LocationFrom", reservation.FlightId);
+                    return View(reservation);
+                }
+
+                // Create the reservation
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // Model state is not valid, return the view with validation errors
             ViewData["FlightId"] = new SelectList(_context.Flights, "Id", "LocationFrom", reservation.FlightId);
             return View(reservation);
         }
