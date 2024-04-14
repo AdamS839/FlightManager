@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Data.Models;
-using FluentEmail.Core;
-using FluentEmail.Smtp;
 using System.Net.Mail;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Identity;
